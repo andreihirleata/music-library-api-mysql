@@ -7,5 +7,6 @@ router.post('/', artistController.createArtist);
 router.get('/', artistController.listRecords);
 router.get('/:artistId', artistController.findById);
 router.patch('/:artistId', artistController.update);
+router.delete('/:artistId', artistController.delete);
 
 module.exports = router;

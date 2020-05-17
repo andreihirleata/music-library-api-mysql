@@ -30,3 +30,15 @@ exports.update = (req, res) => {
     }
   });
 };
+
+exports.delete = (req, res) => {
+  const id = req.params.artistId;
+  Artist.destroy({where: {id} }).then(deletedRow => {
+    if(!deletedRow) {
+      res.status(404).json({error: 'The artist could not be found.'})
+    }
+    else {
+      res.status(204).json(deletedRow);
+    }
+  });
+}
