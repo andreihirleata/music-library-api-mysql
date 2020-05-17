@@ -9,7 +9,9 @@ const albumRouter = require('./routes/album');
 const app = express();
 app.use(express.json());
 
-app.use('/artists', artistRouter);
+app.use('/artists', artistRouter, albumRouter);
+// app.use('/artists', albumRouter);
+
 
 
 app.use(express.json());
