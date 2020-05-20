@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const ArtistModel = require('./models/artist');
 const AlbumModel = require('./models/album');
-// const SongModel = require('./models/song');
+const SongModel = require('./models/song');
 
 
 
@@ -17,15 +17,19 @@ const setupDatabase = () => {
 
   const Artist = ArtistModel(sequelize, Sequelize);
   const Album = AlbumModel(sequelize, Sequelize);
- // const Song = SongModel(sequelize, Sequelize);
-  Album.belongsTo(Artist, { as: 'artist'});
+  const Song = SongModel(sequelize, Sequelize);
+
+  Album.belongsTo(Artist, { as: 'artist'} );
+
+  Song.belongsTo(Album, { as: 'album'} );
+  Song.belongsTo(Artist, {as: 'artist'} );
   
 
   sequelize.sync({ alter: true });
   return {
     Artist,
     Album,
-  //  Song,
+    Song,
   };
 };
 

@@ -32,17 +32,22 @@ describe('/songs', () => {
         year: 2010,
         artistId: artist.id,
       });
+      song = await Song.create({
+        name: 'mockSong',
+        artistId: artist.id,
+        albumId: album.id
+      });
     } catch (err) {
       console.log(err);
     }
   });
 
   describe('POST /album/:albumId/song', () => {
-    xit('creates a new song under an album', (done) => {
+    it('creates a new song under an album', (done) => {
       request(app)
         .post(`/album/${album.id}/song`)
         .send({
-          artist: artist.id,
+          // artist: artist.id, *** Not required to send artistid as its always going to be the album.artistId ***
           name: 'Solitude Is Bliss',
         })
         .then((res) => {
@@ -55,5 +60,28 @@ describe('/songs', () => {
           done();
         });
     });
+    it('returns an error if the album id is wrond', (done) => {
+      request(app)
+            .post(`/album/1234/song`)
+            .send({ name: 'Mock' })
+            .then((res) => {
+              expect(res.status).to.equal(404);
+              expect(res.body.error).to.equal('The album could not be found.');
+              done();
+            });
+    })
   });
+  describe('GET /album/songs/:songId', () => {
+    it('gets a song given an id', (done) => {
+      request(app)
+              .get(`/album/songs/${song.id}`)
+              .then((res) => {
+                expect(res.status).to.equal(200);
+                expect(res.body.name).to.equal(song.name);
+                expect(res.body.artistId).to.equal(artist.id);
+                expect(res.body.albumId).to.equal(album.id);
+                done();
+              })
+    })
+  })
 });

@@ -14,16 +14,12 @@ exports.createAlbum = (req, res) => {
 };
 
 exports.readAllAlbums = (req, res) => {
-  const artistId = parseInt(req.params.artistId, 10);
-  Artist.findByPk(artistId).then(artist => {
+  const id = parseInt(req.params.artistId, 10);
+  Artist.findByPk(id).then(artist => {
     if(!artist) {
       res.status(404).json({error: "The artist could not be found."});
     }else {
-      Album.findAll({include: [{
-        model: Artist,
-        as: 'artist',
-        where: {id: artistId},
-      }]}).then(album => res.status(200).json(album));
+      Album.findAll({where: {artistId: artist.id}}).then(album => res.status(200).json(album));
     }
   });
 }
