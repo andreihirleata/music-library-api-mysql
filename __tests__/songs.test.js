@@ -60,7 +60,7 @@ describe('/songs', () => {
           done();
         });
     });
-    it('returns an error if the album id is wrond', (done) => {
+    it('returns an error if the album id is wrong', (done) => {
       request(app)
             .post(`/album/1234/song`)
             .send({ name: 'Mock' })
@@ -82,6 +82,64 @@ describe('/songs', () => {
                 expect(res.body.albumId).to.equal(album.id);
                 done();
               })
+    });
+    it('returns an error if the song id is wrong', (done) => {
+      request(app)
+              .get(`/album/songs/1234`)
+              .then((res) => {
+                expect(res.status).to.equal(404);
+                expect(res.body.error).to.equal('The song could not be found.');
+                done();
+              })
     })
   })
+
+  describe('PATCH /album/songs/:songId', () => {
+    it('updates a song', (done) => {
+      request(app)
+            .patch(`/album/songs/${song.id}`)
+            .send({ name: 'mock'})
+            .then((res) => {
+              expect(res.status).to.equal(200);
+              Song.findByPk(song.id, { raw: true }).then(updatedSong => {
+                expect(updatedSong.name).to.equal('mock');
+                done();
+              })
+            })
+    });
+    it('returns an error if song id is wrong ', (done) => {
+      request(app)
+              .patch(`/album/songs/1234`)
+              .send({ name:'mock' })
+              .then((res) => {
+                expect(res.status).to.equal(404);
+                expect(res.body.error).to.equal('The song could not be found.');
+                done();
+              });
+    });
+  });
+  describe('DELETE /album/songs/:songId', () => {
+    it('deletes a song', (done) => {
+      request(app)
+            .delete(`/album/songs/${song.id}`)
+            .then((res) => {
+              expect(res.status).to.equal(204);
+              Song.findByPk(song.id, { raw: true }).then(deletedSong => {
+                expect(deletedSong).to.equal(null);
+                done();
+              });
+            });
+    });
+    it('returns an error if song id is wrong', (done) => {
+      request(app)
+            .delete(`/album/songs/1234`)
+            .then((res) => {
+              expect(res.status).to.equal(404);
+              expect(res.body.error).to.equal('The song could not be found.');
+              done();
+            })
+    })
+  });
 });
+
+
